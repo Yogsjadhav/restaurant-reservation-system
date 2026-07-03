@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { reservationService } from '../services/api';
 
@@ -16,15 +16,6 @@ const NewReservation = () => {
 
   const navigate = useNavigate();
 
-  const timeSlots = [
-    '11:00-13:00',
-    '13:00-15:00',
-    '15:00-17:00',
-    '17:00-19:00',
-    '19:00-21:00',
-    '21:00-23:00'
-  ];
-
   const handleChange = (e) => {
     setFormData({
       ...formData,
@@ -32,7 +23,7 @@ const NewReservation = () => {
     });
   };
 
-  const checkAvailability = async () => {
+  const checkAvailability = useCallback(async () => {
     if (!formData.date || !formData.numberOfGuests) {
       return;
     }
@@ -55,7 +46,7 @@ const NewReservation = () => {
     }
 
     setCheckingAvailability(false);
-  };
+  }, [formData.date, formData.numberOfGuests]);
 
   useEffect(() => {
     if (formData.date && formData.numberOfGuests) {
@@ -63,7 +54,7 @@ const NewReservation = () => {
     } else {
       setAvailableSlots([]);
     }
-  }, [formData.date, formData.numberOfGuests]);
+  }, [formData.date, formData.numberOfGuests, checkAvailability]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -88,10 +79,6 @@ const NewReservation = () => {
   const getTodayDate = () => {
     const today = new Date();
     return today.toISOString().split('T')[0];
-  };
-
-  const isSlotAvailable = (slot) => {
-    return availableSlots.some(s => s.timeSlot === slot);
   };
 
   return (
