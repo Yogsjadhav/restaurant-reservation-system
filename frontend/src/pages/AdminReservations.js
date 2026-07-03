@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { reservationService } from '../services/api';
 
 const AdminReservations = () => {
@@ -8,11 +8,7 @@ const AdminReservations = () => {
   const [filterDate, setFilterDate] = useState('');
   const [filterStatus, setFilterStatus] = useState('');
 
-  useEffect(() => {
-    fetchReservations();
-  }, [filterDate, filterStatus]);
-
-  const fetchReservations = async () => {
+  const fetchReservations = useCallback(async () => {
     setLoading(true);
     try {
       const params = {};
@@ -27,7 +23,11 @@ const AdminReservations = () => {
       setError(err.response?.data?.message || 'Failed to fetch reservations');
     }
     setLoading(false);
-  };
+  }, [filterDate, filterStatus]);
+
+  useEffect(() => {
+    fetchReservations();
+  }, [fetchReservations]);
 
   const handleCancel = async (id) => {
     if (!window.confirm('Are you sure you want to cancel this reservation?')) {
@@ -40,16 +40,6 @@ const AdminReservations = () => {
     } catch (err) {
       alert(err.response?.data?.message || 'Failed to cancel reservation');
     }
-  };
-
-  const formatDate = (dateString) => {
-    const date = new Date(dateString);
-    return date.toLocaleDateString('en-US', {
-      weekday: 'short',
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric'
-    });
   };
 
   const getStatusClass = (status) => {
