@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_URL = process.env.REACT_APP_API_URL || 'https://restaurant-reservation-system-o33b.onrender.com/api';
+const API_URL = process.env.REACT_APP_API_URL || 'https://restaurant-reservation-system-o33b.onrender.com/';
 
 const api = axios.create({
   baseURL: API_URL,
